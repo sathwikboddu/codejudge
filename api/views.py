@@ -11,7 +11,7 @@ from django.core import serializers
 
 # Create your views here.
 @csrf_exempt
-def insert(request):
+def leads(request):
     if request.method == 'POST':
         data = json.loads(request.body.decode('utf-8'))
         first_name = data["first_name"]
@@ -23,14 +23,15 @@ def insert(request):
         user = Users(first_name=first_name,last_name=last_name,mobile=mobile,email=email,
                      location_type=location_type,location_string=location_string)
         user.save()
+        check()
+        # print(Users.object.all())
         return JsonResponse({'first_name':first_name,'last_name':last_name,'mobile':mobile,
                              'email':email,'location_type':location_type,'location_string':location_string,
-                             'status':'Created'})
-    
+                             'status':'Created'},status=201)
+
     elif HttpResponse.status_code == 400:
         return JsonResponse({"status": "failure","reason": "Bad Request"})
 
-def fetch(request):
     if request.method == 'GET':
         id = request.GET.get('id')
         result = Users.objects.get(pk=id)
@@ -38,7 +39,7 @@ def fetch(request):
         final_result = json.loads(data)
         final_result = final_result[0]['fields']
         final_result['status'] = 'Created'
-        print(final_result)
+        # print(final_result)
         return JsonResponse(final_result)
    
     elif HttpResponse.status_code == 400:
@@ -46,9 +47,7 @@ def fetch(request):
     
     elif HttpResponse.status_code == 404:
         return JsonResponse({})
-
-@csrf_exempt
-def update(request):
+    
     if request.method == 'PUT':
         id = request.GET.get('id')
         data = json.loads(request.body.decode('utf-8'))
@@ -66,8 +65,6 @@ def update(request):
     elif HttpResponse.status_code == 400:
         return JsonResponse({"status": "failure","reason": "Bad Request"})
 
-@csrf_exempt
-def delete(request):
     if request.method == 'DELETE':
         id = request.GET.get('id')
         Users.objects.filter(id=id).delete()
@@ -76,9 +73,61 @@ def delete(request):
     elif HttpResponse.status_code == 400:
         return JsonResponse({"status": "failure","reason": "Bad Request"})
 
+def check():
+    if Users.objects.latest('pk'):
+        pass
+
+# def fetch(request):
+#     if request.method == 'GET':
+#         id = request.GET.get('id')
+#         result = Users.objects.get(pk=id)
+#         data = serializers.serialize('json', [result,])
+#         final_result = json.loads(data)
+#         final_result = final_result[0]['fields']
+#         final_result['status'] = 'Created'
+#         print(final_result)
+#         return JsonResponse(final_result)
+   
+#     elif HttpResponse.status_code == 400:
+#         return JsonResponse({"status": "failure","reason": "Bad Request"})
+    
+#     elif HttpResponse.status_code == 404:
+#         return JsonResponse({})
+
+
+
+# @csrf_exempt
+# def update(request):
+#     if request.method == 'PUT':
+#         id = request.GET.get('id')
+#         data = json.loads(request.body.decode('utf-8'))
+#         first_name = data["first_name"]
+#         last_name = data["last_name"]
+#         mobile = data["mobile"]
+#         email = data["email"]
+#         location_type = data["location_type"]
+#         location_string = data["location_string"]
+#         Users.objects.filter(pk=id).update(first_name=first_name,last_name=last_name,
+#                                            mobile=mobile,email=email,location_type=location_type,
+#                                            location_string=location_string)
+#         return JsonResponse({'status':'success'}, status=202)
+    
+#     elif HttpResponse.status_code == 400:
+#         return JsonResponse({"status": "failure","reason": "Bad Request"})
+
+# @csrf_exempt
+# def delete(request):
+#     if request.method == 'DELETE':
+#         id = request.GET.get('id')
+#         Users.objects.filter(id=id).delete()
+#         return JsonResponse({'status':'success'}, status=200)
+
+#     elif HttpResponse.status_code == 400:
+#         return JsonResponse({"status": "failure","reason": "Bad Request"})
+
 
 @csrf_exempt
-def mark(request):
+def mark_lead(request):
     if request.method == 'PUT':
         id = request.GET.get('id')
         data = json.loads(request.body.decode('utf-8'))
