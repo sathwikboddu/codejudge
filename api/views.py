@@ -23,8 +23,7 @@ def leads(request):
         user = Users(first_name=first_name,last_name=last_name,mobile=mobile,email=email,
                      location_type=location_type,location_string=location_string)
         user.save()
-        check()
-        # print(Users.object.all())
+        check(mobile)
         return JsonResponse({'first_name':first_name,'last_name':last_name,'mobile':mobile,
                              'email':email,'location_type':location_type,'location_string':location_string,
                              'status':'Created'},status=201)
@@ -73,9 +72,9 @@ def leads(request):
     elif HttpResponse.status_code == 400:
         return JsonResponse({"status": "failure","reason": "Bad Request"})
 
-def check():
-    if Users.objects.latest('pk'):
-        pass
+def check(mobile):
+    if Users.objects.latest('mobile'):
+        return JsonResponse({'status':'success'}, status=200)        
 
 # def fetch(request):
 #     if request.method == 'GET':

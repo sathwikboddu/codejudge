@@ -7,8 +7,8 @@ class Users(models.Model):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    mobile = models.IntegerField()
-    email = models.CharField(max_length=200)
+    mobile = models.IntegerField(unique=True)
+    email = models.CharField(max_length=200,unique=True)
     location_type = models.CharField(max_length=200)
     location_string = models.CharField(max_length=200)
 
